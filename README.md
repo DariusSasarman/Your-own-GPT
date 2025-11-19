@@ -24,11 +24,12 @@ The script automatically:
 
 ## How to Run
 
-1. Make sure Python 3.8+ is installed.  
-2. Run the script:
+1. Make sure Python 3.8+ is installed.
+2. Make sure LLM.py and requirements.txt are in the same folder, in your computer
+3. Run the script, in the comand-prompt:
 
 ```bash
-python your_script.py
+python LLM.py
 ```
 
 ## Function List and Explanations
