@@ -2,7 +2,7 @@
 
 Here's a demo of it working:
 
-https://github.com/DariusSasarman/Your-own-GPT/blob/main/video.mp4
+[Screencast from 2025-11-19 08-22-24.webm](https://github.com/user-attachments/assets/2094e700-9b0b-4c04-bcfa-acd388bc84b4)
 
 
 # CPU-Based LLM Python Script – One-Page Tutorial
