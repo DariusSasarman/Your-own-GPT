@@ -55,6 +55,28 @@ def classify_prompt(prompt):
     return "ambiguous"
 
 
+def RAG_prompt(prompt):
+    import requests
+    from bs4 import BeautifulSoup
+
+    q = prompt
+    url = f"https://html.duckduckgo.com/html/?q={q}"
+
+    prompt += "Context:"
+
+    html = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}).text
+    soup = BeautifulSoup(html, "html.parser")
+
+    for r in soup.select(".result__a"):
+        if(len(prompt) <1800) :
+            prompt += "\n" + r.get_text()
+        else:
+            break
+    
+    return prompt
+
+
+
 def tokenize_prompt(prompt, tokenizer):
     return tokenizer(prompt, return_tensors="pt")
 
@@ -91,19 +113,21 @@ def run_llm_example():
         if prompt.lower() in ["exit", "quit"]:
             print("Exiting LLM...")
             break
+        
 
         category = classify_prompt(prompt)
 
-        match category:
-            case "succinct":
-                input_text = f"Answer briefly: {prompt}"
-                max_tokens = 30
-            case "verbose":
-                input_text = f"Explain in detail: {prompt}"
-                max_tokens = 200
-            case "ambiguous":
-                input_text = f"Provide a thoughtful perspective on: {prompt}"
-                max_tokens = 400
+        prompt = RAG_prompt(prompt)
+
+        if category == "succinct":
+            input_text = f"Answer briefly: {prompt}"
+            max_tokens = 30
+        elif category == "verbose":
+            input_text = f"Explain in detail: {prompt}"
+            max_tokens = 200
+        elif category == "ambiguous":
+            input_text = f"Provide a thoughtful perspective on: {prompt}"
+            max_tokens = 512
 
         inputs = tokenize_prompt(input_text, tokenizer)
         outputs = generate_text(model, inputs, max_new_tokens=max_tokens)
