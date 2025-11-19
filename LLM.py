@@ -58,7 +58,10 @@ def classify_prompt(prompt):
 def RAG_prompt(prompt):
     import requests
     from bs4 import BeautifulSoup
-
+    # from sklearn.feature_extraction.text import TfidfVectorizer
+    # from sklearn.metrics.pairwise import cosine_similarity
+    # later to improve this naive rag.
+    
     q = prompt
     url = f"https://html.duckduckgo.com/html/?q={q}"
 
@@ -121,7 +124,7 @@ def run_llm_example():
 
         if category == "succinct":
             input_text = f"Answer briefly: {prompt}"
-            max_tokens = 30
+            max_tokens = 50
         elif category == "verbose":
             input_text = f"Explain in detail: {prompt}"
             max_tokens = 200
