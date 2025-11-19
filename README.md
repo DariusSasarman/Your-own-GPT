@@ -1,31 +1,20 @@
 # Your-own-GPT
----
 
-Here's a demo of it working:
-
-[Screencast from 2025-11-19 08-22-24.webm](https://github.com/user-attachments/assets/2094e700-9b0b-4c04-bcfa-acd388bc84b4)
-
----
-
-## CPU-Based LLM Python Script 
+## It's a CPU-Based LLM Python Script 
 
 I made this to be used as a 1-hour presentation support, where students would learn to use a Large Language model, and a little about how it all works in the background.
 
----
-
-## How to Run
+## How to Run:
 
 1. Make sure Python 3.8+ is installed.
 2. Install LLM.py and requirements.txt in the same folder, in your computer
 3. Run the following command, in the comand-prompt:
 
 ```bash
-python LLM.py
+python3 LLM.py
 ```
 
----
-
-## Overview
+## Expected behaviour:
 
 The script automatically:
 
@@ -33,6 +22,15 @@ The script automatically:
 2. Upgrades `pip` and installs required Python packages from `requirements.txt`.
 3. Loads a **pre-trained CPU-friendly LLM** using Hugging Face Transformers.
 4. Lets you interact with the model via the command line.
+
+
+---
+
+Here's a demo of it working:
+
+[Screencast from 2025-11-19 08-22-24.webm](https://github.com/user-attachments/assets/2094e700-9b0b-4c04-bcfa-acd388bc84b4)
+
+---
 
 ## Notes
 
