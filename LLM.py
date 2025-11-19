@@ -16,11 +16,11 @@ def create_venv():
 def install_packages():
     """
     Installs packages using the current Python executable (venv or system).
-    Always upgrades pip.
     """
     python_bin = sys.executable  # use current Python
 
-    # Upgrade pip
+    
+    # Pip is upgraded here to make sure the instalation is stable.
     print(f"Upgrading pip using {python_bin}...")
     subprocess.check_call([python_bin, "-m", "pip", "install", "--upgrade", "pip"])
 
@@ -31,16 +31,18 @@ def install_packages():
     else:
         print(f"{REQ_FILE} not found. Make sure it exists in the project root.")
 
-# ---------------- LLM Helper Functions ---------------- #
+# This function prepares the model used
 def load_model(model_name="gpt2"):
     from transformers import AutoModelForCausalLM, AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name)
     return model, tokenizer
 
+# This function translates the given prompt, into values the model can understand
 def tokenize_prompt(prompt, tokenizer):
     return tokenizer(prompt, return_tensors="pt")
 
+# This function extracts the resulting text
 def generate_text(model, inputs, max_new_tokens=50, temperature=1.0, top_k=50):
     outputs = model.generate(
         **inputs,
@@ -81,7 +83,7 @@ def run_llm_example():
             break
 
         # Instruction-tuned prompt
-        input_text = f"Answer the question concisely: {prompt}"
+        input_text = f"Answer the question : {prompt}"
 
         inputs = tokenizer(input_text, return_tensors="pt")
         outputs = model.generate(**inputs, max_new_tokens=50)
