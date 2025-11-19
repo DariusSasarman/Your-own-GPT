@@ -16,11 +16,11 @@ def create_venv():
 def install_packages():
     """
     Installs packages using the current Python executable (venv or system).
+    Always upgrades pip.
     """
     python_bin = sys.executable  # use current Python
 
-    
-    # Pip is upgraded here to make sure the instalation is stable.
+    # Upgrade pip
     print(f"Upgrading pip using {python_bin}...")
     subprocess.check_call([python_bin, "-m", "pip", "install", "--upgrade", "pip"])
 
@@ -31,25 +31,22 @@ def install_packages():
     else:
         print(f"{REQ_FILE} not found. Make sure it exists in the project root.")
 
-# This function prepares the model used
 def load_model(model_name="gpt2"):
     from transformers import AutoModelForCausalLM, AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name)
     return model, tokenizer
 
-# This function translates the given prompt, into values the model can understand
 def tokenize_prompt(prompt, tokenizer):
     return tokenizer(prompt, return_tensors="pt")
 
-# This function extracts the resulting text
-def generate_text(model, inputs, max_new_tokens=50, temperature=1.0, top_k=50):
+def generate_text(model, inputs, max_new_tokens=50, temperature=1.5, top_k=100):
     outputs = model.generate(
         **inputs,
         max_new_tokens=max_new_tokens,
         temperature=temperature,
         top_k=top_k,
-        repetition_penalty=1.2,  # penalize repeated phrases
+        repetition_penalty=1.0,  # penalize repeated phrases
         pad_token_id=model.config.eos_token_id,  # stop at EOS
         do_sample=True  # sampling prevents deterministic looping
     )
@@ -83,12 +80,14 @@ def run_llm_example():
             break
 
         # Instruction-tuned prompt
-        input_text = f"Answer the question : {prompt}"
+        input_text = f"Answer the question the best you can. If you don't reach a 50% sure answer: {prompt}"
 
-        inputs = tokenizer(input_text, return_tensors="pt")
-        outputs = model.generate(**inputs, max_new_tokens=50)
-        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
+        #Tokenize the input prompt 
+        inputs = tokenize_prompt(input_text,tokenizer)
+        #Getting the outputs from the model
+        outputs = generate_text(model,inputs)
+        #Translating the response into human words
+        response = decode_tokens(outputs,tokenizer)
         print(f"LLM: {response}\n")
 
 # ---------------- Main Script ---------------- #
