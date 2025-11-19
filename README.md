@@ -1,6 +1,9 @@
 # Your-own-GPT
 
-**Check video.mp4 for a demo of it working!!!!**
+Here's a demo of it working:
+
+https://github.com/DariusSasarman/Your-own-GPT/blob/main/video.mp4
+
 
 # CPU-Based LLM Python Script – One-Page Tutorial
 
