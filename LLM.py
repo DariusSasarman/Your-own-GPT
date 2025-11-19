@@ -46,41 +46,48 @@ def generate_text(model, inputs, max_new_tokens=50, temperature=1.0, top_k=50):
         **inputs,
         max_new_tokens=max_new_tokens,
         temperature=temperature,
-        top_k=top_k
+        top_k=top_k,
+        repetition_penalty=1.2,  # penalize repeated phrases
+        pad_token_id=model.config.eos_token_id,  # stop at EOS
+        do_sample=True  # sampling prevents deterministic looping
     )
     return outputs
 
-def decode_tokens(outputs, tokenizer):
-    return tokenizer.decode(outputs[0], skip_special_tokens=True)
+def decode_tokens(outputs, tokenizer, prompt_length=None):
+    text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    if prompt_length:
+        # Remove the prompt from the output
+        text = text[prompt_length:]
+    return text.strip()
 
 def run_llm_example():
+    from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
     import torch
+
+    model_name = "google/flan-t5-small"
     try:
-        model, tokenizer = load_model()
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
     except Exception as e:
         print(f"Error loading model: {e}")
         sys.exit(1)
 
-    print("CPU LLM ready! Type 'exit' to quit.")
-    conversation_history = ""  # Optional: keep context for multi-turn
+    print("CPU Q&A LLM ready! Type 'exit' to quit.")
 
     while True:
-        prompt = input("Enter your prompt (or write \"exit\" to exit): ")
+        prompt = input("Enter your prompt: ")
         if prompt.lower() in ["exit", "quit"]:
             print("Exiting LLM...")
             break
 
-        # Optionally append previous conversation for context
-        full_prompt = conversation_history + prompt
+        # Instruction-tuned prompt
+        input_text = f"Answer the question concisely: {prompt}"
 
-        inputs = tokenize_prompt(full_prompt, tokenizer)
-        outputs = generate_text(model, inputs, max_new_tokens=100)
-        response = decode_tokens(outputs, tokenizer)
+        inputs = tokenizer(input_text, return_tensors="pt")
+        outputs = model.generate(**inputs, max_new_tokens=50)
+        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
         print(f"LLM: {response}\n")
-
-        # Update conversation history for multi-turn (optional)
-        conversation_history += prompt + " " + response + " "
 
 # ---------------- Main Script ---------------- #
 def main():
