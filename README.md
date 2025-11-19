@@ -26,6 +26,7 @@ The script automatically:
 
 ```bash
 python your_script.py
+```
 
 ## Function List and Explanations
 
