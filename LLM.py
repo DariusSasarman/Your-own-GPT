@@ -127,8 +127,7 @@ def build_prompt_with_context(query, context_info):
     Flan-T5 works best with clear instructions and structured input.
     """
     if context_info:
-        prompt = f
-        """Answer the following question using the provided context. Be concise and factual.
+        prompt = f"""Answer the following question using the provided context. Be concise and factual.
         Context:
         {context_info}
 
